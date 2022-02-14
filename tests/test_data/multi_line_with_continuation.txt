@@ -1,0 +1,3 @@
+ M 0000000 S5A      22039 09:03:08.10 S0119482 00000210  IRRN003I (<) APPC RECEIVE TRANSACTION PROGRAM OPERATING UNDER USER ID
+ S                                                       245
+ E                                         245 00000210               SETUP GROUP SYS1.

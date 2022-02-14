@@ -1,0 +1,20 @@
+ MR0000000 S5A      22039 00:03:34.19 INTERNAL 00000010  IEE932I 667
+ DR                                        667 00000010  IGW320I 00:03:34 Display SMS,CFLS(IGWLOCK00 )
+ DR                                        667 00000010  PRIMARY STRUCTURE:IGWLOCK00 VERSION:DB00AE5C72F11A21 SIZE:40960K
+ DR                                        667 00000010  RECORD TABLE ENTRIES:80001 USED:2030
+ DR                                        667 00000010  LOCK STRUCTURE MODE: SIMPLEX  STATUS: ENABLE
+ DR                                        667 00000010  System   Interval   LockRate   ContRate  FContRate   WaitQLen
+ DR                                        667 00000010  S5A      1 Minute      813.6      0.000      0.801       0.00
+ DR                                        667 00000010  S5A       1 Hour       816.5      0.002      0.778       0.00
+ DR                                        667 00000010  S5A       8 Hour       815.6      0.003      0.776       0.01
+ DR                                        667 00000010  S5A        1 Day  ---------- ---------- ---------- ----------
+ DR                                        667 00000010    (16)   1 Minute      618.7      0.001      0.635       0.00
+ DR                                        667 00000010    (16)    1 Hour       615.8      0.002      0.635       0.01
+ DR                                        667 00000010    (16)    8 Hour       616.0      0.003      0.634       0.01
+ DR                                        667 00000010    (16)     1 Day       486.1      0.003      0.588       0.02
+ DR                                        667 00000010
+ DR                                        667 00000010  ***************** LEGEND ******************
+ DR                                        667 00000010    LockRate = number of lock requests per second
+ DR                                        667 00000010    CONTRATE = % of lock requests globally managed
+ DR                                        667 00000010    FCONTRATE = % of lock requests falsely globally managed
+ ER                                        667 00000010    WaitQLen = Average number of requests waiting for locks
