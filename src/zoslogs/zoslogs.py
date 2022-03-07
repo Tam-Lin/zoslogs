@@ -33,64 +33,54 @@ class ZosLogs():
 
         messages = dict()
 
-        # Going to loop through twice for now, to reduce complexity.
-        # Thinking of a better way to handle this.
+        current_line = next(text_stream)
 
-        cleaned_text_stream = list()
+        for next_line in tqdm(text_stream, disable=disable_tqdm,
+                         desc="Processing messages", leave=False):
 
-        logger.info("Cleaning text")
-
-        for line in tqdm(text_stream, disable=disable_tqdm, desc="Cleaning text", leave=False):
+            logger.debug(current_line)
 
             # Syslog starts with a leading space; Operlog doesn't.  So, we'll drop leading spaces.
-
-            logger.debug(line)
-
             # Try to discard any characters I don't know what to do with
             # (Problem if using an older version of operlog dump program)
-            line = line.encode("ascii", errors="ignore").decode().lstrip()
 
-            if len(line) == 0:
+            current_line = current_line.encode("ascii", errors="ignore").decode().lstrip()
+
+            if len(current_line) == 0:
+                current_line = next_line
                 continue
 
             # Can happen when a virtual page is created by syslog
-            if line[0].isdigit():
-                line = line[1:]
+            if current_line[0].isdigit():
+                current_line = current_line[1:]
 
             # Next page
-            if line[0] == "+":
+            if current_line[0] == "+":
+                current_line = next_line
                 continue
 
-            # Continuation of prior line
-            if line[0] == "S":
-                try:
-                    cleaned_text_stream[-1] = cleaned_text_stream[-1].rstrip() + " " + \
-                                              line[1:].lstrip()
-                except IndexError:
-                    error = "Trying to add message to prior message, but there is no prior " \
-                            "message\n" + line
-                    if halt_on_errors:
-                        raise MessageException(error)
-                    else:
-                        logger.error(error)
+            next_line = next_line.encode("ascii", errors="ignore").decode().lstrip()
 
+            if next_line[0].isdigit():
+                next_line = next_line[1:]
+
+            # nextline is a continuation of current current_line
+            if next_line[0] == "S":
+                current_line = current_line.rstrip() + " " + next_line[1:].lstrip()
+
+            if current_line[0] == "S":
+                current_line = next_line
                 continue
-
-            cleaned_text_stream.append(line)
-
-        logger.info("Processing cleaned lines")
-
-        for line in tqdm(cleaned_text_stream, disable=disable_tqdm,
-                         desc="Processing messages", leave=False):
 
             new_message = None
 
             # Single Line message or Syslog initialization message
-            if line[0] == "N" or line[0] == "X":
+            if current_line[0] == "N" or current_line[0] == "X":
 
                 try:
-                    new_message = ZosMessage(line, message_filters=message_filters)
+                    new_message = ZosMessage(current_line, message_filters=message_filters)
                 except FilterException:
+                    current_line = next_line
                     continue
                 except MessageException as e:
                     if halt_on_errors:
@@ -99,27 +89,27 @@ class ZosLogs():
                         logger.exception(e)
 
             # Multiline message Start
-            elif line[0] == "M":
+            elif current_line[0] == "M":
 
-                multiline_id = line.split()[-1]
+                multiline_id = current_line.split()[-1]
 
                 try:
                     assert multiline_id.isnumeric()
                 except AssertionError as e:
                     logger.warning("Got multiline id of " + str(multiline_id))
-                    logger.warning(line)
+                    logger.warning(current_line)
                     if halt_on_errors:
                         raise e
 
-                messages[multiline_id] = [line]
+                messages[multiline_id] = [current_line]
 
             # Multiline data or list
-            elif line[0] == "D" or line[0] == "L":
+            elif current_line[0] == "D" or current_line[0] == "L":
 
-                multiline_id = line[42:45]
+                multiline_id = current_line[42:45]
 
                 try:
-                    messages[multiline_id].append(line)
+                    messages[multiline_id].append(current_line)
                 except KeyError as e:
                     error_message = ("Trying to append data to multiline message " + multiline_id +
                                      " with no such message header")
@@ -128,12 +118,12 @@ class ZosLogs():
                         raise MessageException(error_message) from e
 
             # Multiline end
-            elif line[0] == "E":
+            elif current_line[0] == "E":
 
-                multiline_id = line[42:45]
+                multiline_id = current_line[42:45]
 
                 try:
-                    messages[multiline_id].append(line)
+                    messages[multiline_id].append(current_line)
                 except KeyError as e:
                     logger.warning("Trying to append data to multiline message " + multiline_id +
                                    " with no such message header")
@@ -145,6 +135,7 @@ class ZosLogs():
                                              message_filters=message_filters)
                     messages.pop(multiline_id)
                 except FilterException:
+                    current_line = next_line
                     continue
                 except MessageException as e:
                     logger.warning("Error parsing " + str(messages[multiline_id]))
@@ -158,11 +149,122 @@ class ZosLogs():
 
             else:
                 logger.warning("I don't know what to do with message record "
-                               "type " + line[0] + "\n" + line)
+                               "type " + current_line[0] + "\n" + current_line)
                 logger.warning("Skipping")
 
             if new_message:
                 self.message_list.append(new_message)
+
+            current_line = next_line
+
+        else:
+
+            logger.debug(current_line)
+
+            new_message = None
+
+            # Syslog starts with a leading space; Operlog doesn't.  So, we'll drop leading spaces.
+            # Try to discard any characters I don't know what to do with
+            # (Problem if using an older version of operlog dump program)
+
+            current_line = current_line.encode("ascii", errors="ignore").decode().lstrip()
+
+
+            if len(current_line) == 0:
+                pass
+            else:
+                # Can happen when a virtual page is created by syslog
+                if current_line[0].isdigit():
+                    current_line = current_line[1:]
+
+                # Next page
+                if current_line[0] == "+":
+                    pass
+
+                elif current_line[0] == "S":
+                  pass
+
+                else:
+
+                    # Single Line message or Syslog initialization message
+                    if current_line[0] == "N" or current_line[0] == "X":
+
+                        try:
+                            new_message = ZosMessage(current_line, message_filters=message_filters)
+                        except FilterException:
+                            pass
+                        except MessageException as e:
+                            if halt_on_errors:
+                                raise e
+                            else:
+                                logger.exception(e)
+
+                    # Multiline message Start
+                    elif current_line[0] == "M":
+
+                        multiline_id = current_line.split()[-1]
+
+                        try:
+                            assert multiline_id.isnumeric()
+                        except AssertionError as e:
+                            logger.warning("Got multiline id of " + str(multiline_id))
+                            logger.warning(current_line)
+                            if halt_on_errors:
+                                raise e
+
+                        messages[multiline_id] = [current_line]
+
+                    # Multiline data or list
+                    elif current_line[0] == "D" or current_line[0] == "L":
+
+                        multiline_id = current_line[42:45]
+
+                        try:
+                            messages[multiline_id].append(current_line)
+                        except KeyError as e:
+                            error_message = ("Trying to append data to multiline message " + multiline_id +
+                                             " with no such message header")
+                            logger.warning(error_message)
+                            if halt_on_errors:
+                                raise MessageException(error_message) from e
+
+                    # Multiline end
+                    elif current_line[0] == "E":
+
+                        multiline_id = current_line[42:45]
+
+                        try:
+                            messages[multiline_id].append(current_line)
+                        except KeyError as e:
+                            logger.warning("Trying to append data to multiline message " + multiline_id +
+                                           " with no such message header")
+                            if halt_on_errors:
+                                raise e
+
+                        try:
+                            new_message = ZosMessage(messages[multiline_id],
+                                                     message_filters=message_filters)
+                            messages.pop(multiline_id)
+                        except FilterException:
+                            pass
+                        except MessageException as e:
+                            logger.warning("Error parsing " + str(messages[multiline_id]))
+                            if halt_on_errors:
+                                raise e
+                        except KeyError as e:
+                            logger.warning("Got a multiline ending " + multiline_id +
+                                           " with no header")
+                            if halt_on_errors:
+                                raise e
+
+                    else:
+                        logger.warning("I don't know what to do with message record "
+                                       "type " + current_line[0] + "\n" + current_line)
+                        logger.warning("Skipping")
+
+                if new_message:
+                    self.message_list.append(new_message)
+
 
         if len(messages) > 0:
             logger.warning("Have multiline messages I never saw an ending for")
@@ -184,6 +286,9 @@ class ZosLogs():
 
             if new_message is not None:
                 self.message_list.append(new_message)
+
+    def __process_current(self, current_line):
+        pass
 
     def __len__(self):
         return len(self.message_list)
