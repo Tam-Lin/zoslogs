@@ -227,3 +227,11 @@ def test_multiple_messages_with_filters_and_exception_and_halt():
                           'tests/test_data/multi_line_with_no_message_header.txt')) as file:
         with pytest.raises(MessageException):
             zoslogs.ZosLogs(file, message_filters=filter, halt_on_errors=True)
+
+
+def test_blank_line_in_log_file():
+    with open('tests/test_data/blank_line.txt') as file:
+        log = zoslogs.ZosLogs(file)
+
+    assert len(log) == 9
+

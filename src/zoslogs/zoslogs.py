@@ -39,6 +39,7 @@ class ZosLogs():
                          desc="Processing messages", leave=False):
 
             logger.debug(current_line)
+            logger.debug(next_line)
 
             # Syslog starts with a leading space; Operlog doesn't.  So, we'll drop leading spaces.
             # Try to discard any characters I don't know what to do with
@@ -51,26 +52,36 @@ class ZosLogs():
                 continue
 
             # Can happen when a virtual page is created by syslog
-            if current_line[0].isdigit():
-                current_line = current_line[1:]
+            try:
+                if current_line[0].isdigit():
+                    current_line = current_line[1:]
 
-            # Next page
-            if current_line[0] == "+":
+                # Next page
+                elif current_line[0] == "+":
+                    current_line = next_line
+                    continue
+
+                # Continuation of a prior line
+                elif current_line[0] == "S":
+                    current_line = next_line
+                    continue
+
+            except IndexError:
                 current_line = next_line
                 continue
+
 
             next_line = next_line.encode("ascii", errors="ignore").decode().lstrip()
 
-            if next_line[0].isdigit():
-                next_line = next_line[1:]
+            try:
+                if next_line[0].isdigit():
+                    next_line = next_line[1:]
 
-            # nextline is a continuation of current current_line
-            if next_line[0] == "S":
-                current_line = current_line.rstrip() + " " + next_line[1:].lstrip()
-
-            if current_line[0] == "S":
-                current_line = next_line
-                continue
+                # nextline is a continuation of current current_line
+                if next_line[0] == "S":
+                    current_line = current_line.rstrip() + " " + next_line[1:].lstrip()
+            except IndexError:
+                pass
 
             new_message = None
 
