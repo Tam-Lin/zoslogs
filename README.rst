@@ -6,7 +6,7 @@ zoslogs
 .. image:: https://img.shields.io/pypi/v/zoslogs.svg
         :target: https://pypi.python.org/pypi/zoslogs
 
-.. image:: https://img.shields.io/travis/kmckenzi/zoslogs.svg
+.. image:: https://img.shields.io/travis/Tam-Lin/zoslogs.svg
         :target: https://travis-ci.com/Tam-Lin/zoslogs
 
 .. image:: https://readthedocs.org/projects/zoslogs/badge/?version=latest
