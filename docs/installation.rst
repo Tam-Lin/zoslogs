@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/kmckenzi/zoslogs
+    $ git clone git://github.com/Tam-Lin/zoslogs
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/kmckenzi/zoslogs/tarball/master
+    $ curl -OJL https://github.com/Tam-Lin/zoslogs/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/kmckenzi/zoslogs
-.. _tarball: https://github.com/kmckenzi/zoslogs/tarball/master
+.. _Github repo: https://github.com/Tam-Lin/zoslogs
+.. _tarball: https://github.com/Tam-Lin/zoslogs/tarball/master
