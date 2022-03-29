@@ -5,9 +5,11 @@ zoslogs
 
 .. image:: https://img.shields.io/pypi/v/zoslogs.svg
         :target: https://pypi.python.org/pypi/zoslogs
+        :alt:  Pypi
 
-.. image:: https://img.shields.io/travis/Tam-Lin/zoslogs.svg
-        :target: https://app.travis-ci.com/github/Tam-Lin/zoslogs
+.. image:: https://github.com/Tam-Lin/zoslogs/actions/workflows/build.yml/badge.svg
+        :target: https://github.com/Tam-Lin/zoslogs/actions/workflows/build.yml
+        :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/zoslogs/badge/?version=latest
         :target: https://zoslogs.readthedocs.io/en/latest/?version=latest
