@@ -66,7 +66,7 @@ setup(
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/kmckenzi/zoslogs',
+    url='https://github.com/Tam-Lin/zoslogs',
     version='0.1.1',
     zip_safe=False,
 )
