@@ -68,7 +68,6 @@ Ready to contribute? Here's how to set up `zoslogs` for local development.
 
     $ mkvirtualenv zoslogs
     $ cd zoslogs/
-    $ python setup.py develop
 
 4. Create a branch for local development::
 
@@ -80,7 +79,6 @@ Ready to contribute? Here's how to set up `zoslogs` for local development.
    tests, including testing other Python versions with tox::
 
     $ flake8 zoslogs tests
-    $ python setup.py test or pytest
     $ tox
 
    To get flake8 and tox, just pip install them into your virtualenv.
@@ -102,7 +100,7 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 3.6, 3.7, 3.8, 3.9 and 3.10. Check
+3. The pull request should work for Python 3.9, 3.10, 3.11, 3.12 and 3.13. Check
    https://github.com/Tam-Lin/zoslogs/workflows/check_pr.yaml
    and make sure that the tests pass for all supported Python versions.
 
@@ -121,6 +119,6 @@ A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed (including an entry in HISTORY.rst).
 Then run::
 
-$ bump2version patch # possible: major / minor / patch
+$ Update the zoslogs.__init__ __version__ statement
 $ git push
 $ git push --tags

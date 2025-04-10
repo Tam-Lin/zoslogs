@@ -2,6 +2,17 @@
 History
 =======
 
+0.3.0 (2025-04-09)
+------------------
+
+* Update supported levels of python
+* Switch build to pyproject from setup.py
+
+0.2.0
+------------------
+
+* Fix issue with github actions
+
 0.1.3 (2022-0x-04)
 ------------------
 

@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zoslogs"
+description = "Library for breaking z/OS log files up into individual messages"
+authors = [
+    {name = "Kevin McKenzie", email="kmckenzi@us.ibm.com"},
+]
+requires-python = ">=3.6"
+dynamic = ["version"]
+dependencies = [
+    "tqdm"
+]
+readme = "README.rst"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+keywords=['zoslogs', "z/OS", "mainframe"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+            'Intended Audience :: Developers',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "zoslogs.__version__"}
+
+[project.scripts]
+zoslogscli = "zoslogs:zoslogscli"
+
+[project.urls]
+Homepage = "https://github.com/Tam-Lin/zoslogs"
+Repository = "https://github.com/Tam-Lin/zoslogs.git"
+Changelog = "https://github.com/Tam-Lin/zoslogs/blob/master/HISTORY.rst"
+
+
+[dependency-groups]
+development = [
+    "tox",
+    "flake8",
+    "coverage"
+]
+test = [
+    "pytest",
+    {include-group = "development"}
+]
+
+
+[tool.tox]
+envlist = [
+    "py39", 
+    "py310", 
+    "py311", 
+    "py312", 
+    "py313", 
+    "flake8"
+]
+
+[tool.tox.env_run_base]
+dependency_groups = [
+  "test"
+]
+#set_env = { VIRTUALENV_DISCOVERY = "pyenv" }
